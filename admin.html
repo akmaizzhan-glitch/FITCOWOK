@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Produk - FITCOWOK.ID</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="admin-box">
+  <a class="back" href="index.html">← Kembali ke Website</a>
+  <h1>Admin Produk</h1>
+  <p class="small-note">Versi ini bisa tambah/edit produk tanpa ubah coding. Catatan: karena GitHub Pages tidak punya database, data tersimpan di browser kamu lewat localStorage. Untuk tampil ke semua orang, nanti kita perlu Firebase/Supabase.</p>
+  <form class="form" id="productForm">
+    <div class="row">
+      <input id="nama" placeholder="Nama produk" required>
+      <input id="harga" placeholder="Harga, contoh Rp 99.000" required>
+    </div>
+    <div class="row">
+      <select id="cat" required>
+        <option value="branda">Branda / Outfit</option>
+        <option value="baju">Baju</option>
+        <option value="celanaPanjang">Celana Panjang</option>
+        <option value="celanaPendek">Celana Pendek</option>
+        <option value="jam">Jam Tangan</option>
+        <option value="sepatu">Sepatu</option>
+      </select>
+      <input id="link" placeholder="Link afiliasi" required>
+    </div>
+    <textarea id="desc" placeholder="Deskripsi singkat" required></textarea>
+    <input id="gambar" placeholder="Link gambar / nama file, contoh assets/produk/baju1.jpg" required>
+    <button class="save" type="submit">+ Tambah Produk</button>
+  </form>
+  <div class="product-admin" id="adminList"></div>
+</div>
+<script src="script.js"></script>
+<script>
+const form=document.getElementById('productForm');
+function renderAdmin(){
+ const list=document.getElementById('adminList'); const products=getProducts();
+ list.innerHTML=products.map((p,i)=>`<div class="admin-item"><img src="${p.gambar}"><div><b>${p.nama}</b><br><small>${p.cat} • ${p.harga}</small></div><button class="danger" onclick="deleteProduct(${i})">Hapus</button></div>`).join('');
+}
+function deleteProduct(i){const products=getProducts();products.splice(i,1);saveProducts(products);renderAdmin();}
+form.addEventListener('submit',e=>{e.preventDefault();const products=getProducts();products.push({nama:nama.value,harga:harga.value,cat:cat.value,link:link.value,desc:desc.value,gambar:gambar.value});saveProducts(products);form.reset();renderAdmin();alert('Produk berhasil ditambahkan');});
+renderAdmin();
+</script>
+</body>
+</html>

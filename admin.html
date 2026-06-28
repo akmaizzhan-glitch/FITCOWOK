@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin FITCOWOK</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#0b0b0b;color:white}
+
+.box{
+max-width:400px;
+margin:100px auto;
+background:#111;
+padding:20px;
+border-radius:12px;
+text-align:center;
+}
+
+input,select,textarea{
+width:100%;
+margin:8px 0;
+padding:10px;
+border:none;
+border-radius:8px;
+background:#1a1a1a;
+color:white;
+}
+
+button{
+width:100%;
+padding:10px;
+background:orange;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.dashboard{display:none}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="login">
+<h2>ADMIN LOGIN</h2>
+<input id="u" placeholder="Username">
+<input id="p" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+
+<div class="box dashboard" id="dash">
+
+<h2>Tambah Produk</h2>
+
+<input id="name" placeholder="Nama produk">
+<input id="price" placeholder="Harga">
+<input id="image" placeholder="Link gambar">
+<input id="link" placeholder="Link afiliasi">
+
+<select id="category">
+<option value="baju">Baju</option>
+<option value="celanaPanjang">Celana Panjang</option>
+<option value="celanaPendek">Celana Pendek</option>
+<option value="jam">Jam Tangan</option>
+<option value="sepatu">Sepatu</option>
+</select>
+
+<textarea id="desc" placeholder="Deskripsi"></textarea>
+
+<button onclick="add()">+ Tambah Produk</button>
+
+</div>
+
+<script>
+
+function login(){
+let u=document.getElementById("u").value;
+let p=document.getElementById("p").value;
+
+if(u==="admin" && p==="123"){
+document.getElementById("login").style.display="none";
+document.getElementById("dash").style.display="block";
+}else{
+alert("Salah login");
+}
+}
+
+function get(){
+return JSON.parse(localStorage.getItem("products")||"[]");
+}
+
+function save(data){
+localStorage.setItem("products",JSON.stringify(data));
+}
+
+function add(){
+let data=get();
+
+data.push({
+name:document.getElementById("name").value,
+price:document.getElementById("price").value,
+image:document.getElementById("image").value,
+link:document.getElementById("link").value,
+category:document.getElementById("category").value,
+desc:document.getElementById("desc").value
+});
+
+save(data);
+
+alert("Produk ditambahkan!");
+}
+</script>
+
+</body>
+</html>

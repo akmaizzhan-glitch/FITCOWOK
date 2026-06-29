@@ -23,17 +23,45 @@
       <button class="menuBtn desktop-hide" id="openSide">☰</button>
       <div class="top-logo">FITCOWOK</div>
       <div class="top-actions">
-        <button id="themeBtn">◐</button>
-        <a class="admin-link" href="admin.html">Admin</a>
       </div>
     </header>
 
     <section class="hero">
-      <img src="logo-fc.png" alt="FITCOWOK Logo" />
+      <img src="assets/logo-fc.png" alt="FITCOWOK Logo" />
     </section>
 
     <section class="outfit-head">
       <h1>✨ SPIL HASIL OUTFIT</h1>
+      <button data-filter-button="Outfit">Lihat Semua ›</button>
+    </section>
+    <section class="outfit-grid" id="outfitGrid"></section>
+
+    <section class="sections" id="productSections"></section>
+
+    <footer class="features">
+      <div>♙ <b>Produk Berkualitas</b><span>Pilihan terbaik & terpercaya</span></div>
+      <div>🏷 <b>Harga Terbaik</b><span>Harga bersaing setiap hari</span></div>
+      <div>▣ <b>Pengiriman Cepat</b><span>Aman & sampai cepat</span></div>
+      <div>🛡 <b>100% Aman</b><span>Belanja aman & nyaman</span></div>
+    </footer>
+  </main>
+
+  <div class="modal hidden" id="modal">
+    <div class="modal-box">
+      <button class="close" id="closeModal">×</button>
+      <img id="modalImg" alt="Produk" />
+      <div class="modal-content">
+        <h2 id="modalName"></h2>
+        <p id="modalDesc"></p>
+        <b id="modalPrice"></b>
+        <button class="buy" id="buyBtn">Beli</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
       <button data-filter-button="Outfit">Lihat Semua ›</button>
     </section>
     <section class="outfit-grid" id="outfitGrid"></section>

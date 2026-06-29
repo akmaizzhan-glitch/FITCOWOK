@@ -1,40 +1,67 @@
 const SUPABASE_URL = "https://iifibvnfgytzelgrtdwk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_JTZ3m6KsVzysRb788v1iZQ_syh1i0Gh";
-const db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-const TABLE = "products";
-const rupiah = n => "Rp " + Number(n || 0).toLocaleString("id-ID");
-const img = q => `https://images.unsplash.com/${q}?auto=format&fit=crop&w=700&q=85`;
-const defaultProducts = [
- {name:"Outfit Kasual",category:"Outfit",price:0,description:"Simple & Nyaman",image:img("photo-1617137968427-85924c800a22")},
- {name:"Street Style",category:"Outfit",price:0,description:"Cool & Stylish",image:img("photo-1516257984-b1b4d707412e")},
- {name:"Daily Look",category:"Outfit",price:0,description:"Minimalis & Rapi",image:img("photo-1610652492500-ded49ceeb378")},
- {name:"All Black",category:"Outfit",price:0,description:"Bold & Clean",image:img("photo-1515886657613-9f3515b0c78f")},
- {name:"Smart Casual",category:"Outfit",price:0,description:"Rapi & Keren",image:img("photo-1620012253295-c15cc3e65df4")},
- {name:"Simple Look",category:"Outfit",price:0,description:"Effortless & Fresh",image:img("photo-1602810318383-e386cc2a3ccf")},
- {name:"Oversize Tee",category:"Baju",price:99000,description:"Kaos oversize hitam premium.",image:img("photo-1521572163474-6864f9cf17ab")},
- {name:"Basic Tee",category:"Baju",price:79000,description:"Kaos basic putih harian.",image:img("photo-1581655353564-df123a1eb820")},
- {name:"Striped Shirt",category:"Baju",price:129000,description:"Kemeja garis casual.",image:img("photo-1598032895397-b9472444bf93")},
- {name:"Polo Shirt",category:"Baju",price:119000,description:"Polo shirt clean look.",image:img("photo-1622470953794-aa9c70b0fb9d")},
- {name:"Cargo Pants",category:"Celana Panjang",price:149000,description:"Cargo pants abu-abu.",image:img("photo-1473966968600-fa801b869a1a")},
- {name:"Jeans Slim Fit",category:"Celana Panjang",price:159000,description:"Jeans slim fit pria.",image:img("photo-1542272604-787c3835535d")},
- {name:"Chino Pants",category:"Celana Panjang",price:139000,description:"Chino warna cream.",image:img("photo-1624378439575-d8705ad7ae80")},
- {name:"Formal Pants",category:"Celana Panjang",price:149000,description:"Celana formal hitam.",image:img("photo-1594938298603-c8148c4dae35")},
- {name:"Short Pants",category:"Celana Pendek",price:89000,description:"Celana pendek hitam.",image:img("photo-1591195853828-11db59a44f6b")},
- {name:"Cargo Pendek",category:"Celana Pendek",price:99000,description:"Cargo pendek casual.",image:img("photo-1562157873-818bc0726f68")},
- {name:"Chino Pendek",category:"Celana Pendek",price:89000,description:"Chino pendek putih.",image:img("photo-1506629905607-d9e297d03993")},
- {name:"Basic Pendek",category:"Celana Pendek",price:79000,description:"Basic shorts nyaman.",image:img("photo-1594633312681-425c7b97ccd1")},
- {name:"Analog Classic",category:"Jam Tangan",price:299000,description:"Jam analog klasik.",image:img("photo-1523275335684-37898b6baf30")},
- {name:"Chronograph",category:"Jam Tangan",price:359000,description:"Jam chronograph sporty.",image:img("photo-1539874754764-5a96559165b0")},
- {name:"Digital Sport",category:"Jam Tangan",price:199000,description:"Jam digital sport.",image:img("photo-1434493789847-2f02dc6ca35d")},
- {name:"Minimalist",category:"Jam Tangan",price:279000,description:"Jam putih minimalis.",image:img("photo-1524592094714-0f0654e20314")},
- {name:"Metal Strap",category:"Jam Tangan",price:329000,description:"Jam rantai metal.",image:img("photo-1614164185128-e4ec99c436d7")},
- {name:"Sneakers Putih",category:"Sepatu",price:299000,description:"Sneakers putih clean.",image:img("photo-1549298916-b41d501d3772")},
- {name:"Sneakers Hitam",category:"Sepatu",price:299000,description:"Sneakers hitam casual.",image:img("photo-1542291026-7eec264c27ff")},
- {name:"Canvas Shoes",category:"Sepatu",price:199000,description:"Canvas shoes santai.",image:img("photo-1525966222134-fcfa99b8ae77")},
- {name:"Sport Sneakers",category:"Sepatu",price:349000,description:"Sepatu olahraga.",image:img("photo-1543508282-6319a3e2621f")},
- {name:"Loafers",category:"Sepatu",price:289000,description:"Loafers formal pria.",image:img("photo-1614252369475-531eba835eb1")}
-];
-let products = [], cart = JSON.parse(localStorage.getItem("fc_cart") || "[]"), selectedProduct = null;
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function loadProducts() {
+  const productContainer = document.getElementById("product-list");
+  if (!productContainer) return;
+
+  productContainer.innerHTML = "<p>Loading produk...</p>";
+
+  const { data, error } = await supabaseClient
+    .from("products")
+    .select("*")
+    .order("id", { ascending: false });
+
+  if (error) {
+    productContainer.innerHTML = "<p>Gagal memuat produk.</p>";
+    console.error(error);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    productContainer.innerHTML = "<p>Belum ada produk.</p>";
+    return;
+  }
+
+  productContainer.innerHTML = "";
+
+  data.forEach((product) => {
+    const productCard = document.createElement("div");
+    productCard.className = "product-card";
+
+    const affiliateLink = product.link || product.affiliate_link || "#";
+
+    productCard.innerHTML = `
+      <img src="${product.image || product.image_url || ""}" alt="${product.name || "Produk"}">
+
+      <div class="product-info">
+        <h3>${product.name || "Nama Produk"}</h3>
+        <p>${product.description || ""}</p>
+
+        ${
+          product.price
+            ? `<span class="price">Rp ${Number(product.price).toLocaleString("id-ID")}</span>`
+            : ""
+        }
+
+        <a 
+          href="${affiliateLink}" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="buy-btn"
+        >
+          Beli Sekarang
+        </a>
+      </div>
+    `;
+
+    productContainer.appendChild(productCard);
+  });
+}
+
+loadProducts();let products = [], cart = JSON.parse(localStorage.getItem("fc_cart") || "[]"), selectedProduct = null;
 async function loadProducts(){
   products = defaultProducts;
   if(db){

@@ -3,29 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FITCOWOK.ID</title>
+<title>FITCOWOK.ID - Men's Fashion</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="overlay" id="overlay" onclick="closeMenu()"></div>
-<aside class="sidebar" id="sidebar">
-  <div class="side-logo">FITCOWOK.ID</div>
-  <div class="menu">
-    <button class="active" data-cat="branda">🏠 Branda</button>
-    <button data-cat="baju">👕 Baju</button>
-    <button data-cat="celanaPanjang">👖 Celana Panjang</button>
-    <button data-cat="celanaPendek">🩳 Celana Pendek</button>
-    <button data-cat="jam">⌚ Jam Tangan</button>
-    <button data-cat="sepatu">👟 Sepatu</button>
+
+<header class="navbar">
+  <div class="nav-left">
+    <button id="menuBtn">☰</button>
+    <h1>FITCOWOK.ID</h1>
   </div>
-  <a class="admin-link" href="admin.html">⚙️ Admin Produk</a>
-</aside>
-<header class="topbar">
-  <button class="menu-btn" onclick="openMenu()">☰</button>
-  <div class="brand-title">FITCOWOK.ID</div>
+  <div class="nav-right">
+    <input id="searchInput" type="text" placeholder="Cari produk...">
+    <button id="themeBtn">🌙</button>
+    <button id="cartBtn">🛒 <span id="cartCount">0</span></button>
+  </div>
 </header>
-<main class="container" id="app"></main>
-<footer class="footer">© 2026 FITCOWOK.ID</footer>
+
+<aside class="sidebar" id="sidebar">
+  <a href="#" class="active" data-cat="all">🏠 Branda</a>
+  <a href="#" data-cat="baju">👕 Baju</a>
+  <a href="#" data-cat="celanaPanjang">👖 Celana Panjang</a>
+  <a href="#" data-cat="celanaPendek">🩳 Celana Pendek</a>
+  <a href="#" data-cat="jam">⌚ Jam Tangan</a>
+  <a href="#" data-cat="sepatu">👟 Sepatu</a>
+</aside>
+
+<main class="container">
+  <div class="banner">
+    <div class="logo-fc">FC</div>
+    <h3>FITCOWOK</h3>
+    <p>EST. 2024</p>
+    <small>MEN'S FASHION</small>
+  </div>
+
+  <section class="outfit-section">
+    <div class="section-head">
+      <h2>✨ SPIL HASIL OUTFIT</h2>
+      <a href="#">Lihat Semua ></a>
+    </div>
+    <div class="outfit-slider" id="outfitSlider"></div>
+  </section>
+
+  <div id="productSections"></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 </body>
 </html>

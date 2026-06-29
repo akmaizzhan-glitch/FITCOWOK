@@ -1,40 +1,85 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Produk - FITCOWOK.ID</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - FITCOWOK.ID</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.login-box {max-width: 400px; margin: 100px auto; padding: 30px; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.1);}
-.login-box input,.login-box button {width: 100%; padding: 12px; margin-top: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;}
-.login-box button {background: #111; color: #fff; cursor: pointer; border: none; font-weight: 600;}
-.hidden {display: none!important;}
-.admin-item img {width: 60px; height: 60px; object-fit: cover; border-radius: 8px;}
-.admin-item {display:flex; gap:12px; align-items:center; padding:12px; border:1px solid #eee; border-radius:8px; margin-top:10px;}
-.danger {background:#ef4444; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; margin-left:auto;}
+.login-box{max-width:400px;margin:100px auto;padding:30px;background:var(--card);border-radius:12px;border:1px solid #333}
+.login-box h1{text-align:center;margin-bottom:16px}
+.admin-item{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid #333;border-radius:8px;margin-top:10px;background:var(--card)}
+.admin-item img{width:60px;height:60px;object-fit:cover;border-radius:8px}
+.danger{background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;margin-left:auto}
 </style>
 </head>
 <body>
 
 <div class="login-box" id="loginBox">
   <h1>Login Admin</h1>
-  <input id="email" type="email" placeholder="Email Admin Supabase" required>
-  <input id="password" type="password" placeholder="Password" required>
-  <button id="btnLogin">Masuk</button>
-  <p id="loginError" style="color:red; font-size: 14px; margin-top: 8px;"></p>
+  <input id="email" type="email" value="admin@fitcowok.com" readonly>
+  <input id="password" type="password" placeholder="Password: admin123456" required>
+  <button id="btnLogin" class="save">Masuk</button>
+  <p id="loginError" style="color:#ef4444;font-size:14px;margin-top:8px;text-align:center"></p>
 </div>
 
-<div class="admin-box hidden" id="adminBox">
-  <button class="back" id="btnLogout" style="float:right; background:#ef4444; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; margin-left: 10px;">Logout</button>
-  <a class="back" href="index.html">← Kembali ke Website</a>
-  <h1>Admin Produk</h1>
-  <form class="form" id="productForm">
+<div class="container hidden" id="adminBox">
+  <button id="btnLogout" style="float:right;background:#ef4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;margin-bottom:16px">Logout</button>
+  <a href="index.html" style="color:var(--muted)">← Kembali ke Website</a>
+  <h1 style="margin:16px 0">Admin Produk</h1>
+  <form id="productForm" class="form" style="background:var(--card);padding:16px;border-radius:12px;border:1px solid #333">
     <div class="row">
       <input id="nama" placeholder="Nama produk" required>
       <input id="harga" placeholder="Harga, contoh Rp 99.000" required>
     </div>
     <div class="row">
+      <select id="cat" required>
+        <option value="baju">Baju</option><option value="celanaPanjang">Celana Panjang</option>
+        <option value="celanaPendek">Celana Pendek</option><option value="jam">Jam Tangan</option><option value="sepatu">Sepatu</option>
+      </select>
+      <input id="link" placeholder="Link Shopee/Tokped" required>
+    </div>
+    <textarea id="desc" placeholder="Deskripsi singkat" required rows="3"></textarea>
+    <label style="margin-top:10px;display:block">Upload Gambar Produk:</label>
+    <input id="gambarFile" type="file" accept="image/*" required>
+    <button class="save" type="submit">+ Tambah Produk</button>
+  </form>
+  <div id="adminList" style="margin-top:20px"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://iifibvnfgytzelgrtdwk.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_JTZ3m6KsVzysRb788v1iZQ_syh1i0Gh'
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+supabase.auth.getSession().then(({ data: { session } }) => { if (session) showAdmin() })
+document.getElementById('btnLogin').onclick = async () => {
+  document.getElementById('loginError').innerText = 'Loading...';
+  const { error } = await supabase.auth.signInWithPassword({email:'admin@fitcowok.com',password:document.getElementById('password').value.trim()})
+  if(error){ document.getElementById('loginError').innerText = 'ERROR: ' + error.message } else { showAdmin() }
+}
+document.getElementById('btnLogout').onclick = async () => { await supabase.auth.signOut(); location.reload() }
+function showAdmin(){ document.getElementById('loginBox').classList.add('hidden'); document.getElementById('adminBox').classList.remove('hidden'); renderAdmin() }
+
+async function renderAdmin(){
+  const { data: products } = await supabase.from('produk').select('*').order('id',{ascending:false})
+  document.getElementById('adminList').innerHTML = products.length?products.map(p=>`
+    <div class="admin-item"><img src="${p.gambar}"><div><b>${p.nama}</b><br><small>${p.cat} • ${p.harga}</small></div><button class="danger" onclick="deleteProduct('${p.id}')">Hapus</button></div>
+  `).join(''):'<p style="color:var(--muted)">Belum ada produk</p>'
+}
+async function deleteProduct(id){ if(!confirm('Hapus produk ini?'))return; await supabase.from('produk').delete().eq('id',id); renderAdmin() }
+
+document.getElementById('productForm').addEventListener('submit', async e=>{
+  e.preventDefault(); const file=document.getElementById('gambarFile').files[0]; if(!file)return alert('Upload gambar dulu')
+  const fileName=`${Date.now()}_${file.name}`;
+  const {error:upErr}=await supabase.storage.from('produk').upload(fileName,file); if(upErr)return alert('Gagal upload: '+upErr.message)
+  const {data}=supabase.storage.from('produk').getPublicUrl(fileName);
+  const {error}=await supabase.from('produk').insert([{nama:nama.value,harga:harga.value,cat:cat.value,link:link.value,desc:desc.value,gambar:data.publicUrl}])
+  if(error)alert('Gagal simpan: '+error.message); else{e.target.reset();renderAdmin();alert('Produk berhasil ditambahkan')}
+})
+</script>
+</body>
+</html>    <div class="row">
       <select id="cat" required>
         <option value="branda">Branda / Outfit</option>
         <option value="baju">Baju</option>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin FITCOWOK</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="admin-body">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <img src="assets/logo-fc.png" alt="FITCOWOK" />
+      <div><h1>Admin FITCOWOK</h1><p>Tambah, edit, hapus produk afiliasi.</p></div>
+      <a href="index.html">Lihat Website</a>
+    </div>
+
+    <section class="login-box" id="loginBox">
+      <h2>Login Admin</h2>
+      <input id="adminPass" type="password" placeholder="Password admin" />
+      <button id="loginBtn">Masuk</button>
+      <small>Password default: fitcowok2024</small>
+    </section>
+
+    <section class="admin-panel hidden" id="adminPanel">
+      <form id="productForm" class="admin-form">
+        <input type="hidden" id="productId" />
+        <input id="name" required placeholder="Nama produk" />
+        <select id="category" required>
+          <option value="Baju">Baju</option>
+          <option value="Celana Panjang">Celana Panjang</option>
+          <option value="Celana Pendek">Celana Pendek</option>
+          <option value="Jam Tangan">Jam Tangan</option>
+          <option value="Sepatu">Sepatu</option>
+          <option value="Outfit">Outfit</option>
+        </select>
+        <input id="price" type="number" placeholder="Harga" />
+        <input id="image" required placeholder="Link gambar produk" />
+        <input id="link" required placeholder="Link produk / affiliate" />
+        <textarea id="description" placeholder="Deskripsi produk"></textarea>
+        <div class="form-actions">
+          <button class="primary" type="submit">Simpan Produk</button>
+          <button class="ghost" type="button" id="resetBtn">Reset</button>
+        </div>
+      </form>
+      <div class="admin-list" id="adminList"></div>
+    </section>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
